@@ -112,9 +112,9 @@ class App extends Component {
 
   render() {
     const buttonStyle = {
-      "font-size": "28px",
-      "padding-right": "32px",
-      "padding-left": "32px",
+      fontSize: "28px",
+      paddingRight: "32px",
+      paddingLeft: "32px",
       height: "64px"
     };
     const checkboxStyle = {
