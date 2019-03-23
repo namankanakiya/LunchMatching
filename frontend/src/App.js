@@ -7,7 +7,8 @@ import {
   Checkbox,
   Stack,
   PrimaryButton,
-  DefaultButton
+  DefaultButton,
+  Spinner
 } from "office-ui-fabric-react";
 import { initializeIcons } from "office-ui-fabric-react/lib/Icons";
 initializeIcons();
@@ -15,6 +16,7 @@ initializeIcons();
 class App extends Component {
   constructor() {
     super();
+    this.axiosInstance = axios;
     this.authService = new AuthService();
     this.graphService = new GraphService();
     this.state = {
@@ -30,11 +32,13 @@ class App extends Component {
     };
   }
 
-  componentWillMount() {
-    const user = this.authService.app.getUser();
+  componentDidMount() {
+    let user = this.authService.app.getUser();
     if (user && user.idToken && !this.isTokenExpired(user.idToken.exp)) {
       this.setState({ user: user });
-      this.callAPI();
+      this.axiosLogin();
+    } else {
+      this.login();
     }
   }
 
@@ -91,6 +95,7 @@ class App extends Component {
           this.setState({
             user: user
           });
+          this.axiosLogin();
         } else {
           this.setState({
             loginFailed: true
@@ -103,6 +108,18 @@ class App extends Component {
         });
       }
     );
+  };
+
+  axiosLogin = () => {
+    this.authService.getToken().then(accessToken => {
+      this.axiosInstance.defaults.headers.common = {
+        Authorization: `Bearer ${accessToken}`
+      };
+      this.axiosInstance
+        .get("/api/login")
+        .then(res => this.setState({ userInfo: res.data }))
+        .catch(err => this.setState({ loginFailed: true, user: null }));
+    });
   };
 
   isTokenExpired = tokenTime => {
@@ -197,14 +214,18 @@ class App extends Component {
         </div>
       );
     } else {
-      templates.push(
-        <div key="loggedIn">
-          <PrimaryButton text="Login with Microsoft" onClick={this.login} />
-        </div>
-      );
-    }
-    if (this.state.loginFailed) {
-      templates.push(<strong key="loginFailed">Login unsuccessful</strong>);
+      if (this.state.loginFailed) {
+        templates.push(
+          <div key="loggedIn">
+            <div>
+              <PrimaryButton text="Login with Microsoft" onClick={this.login} />
+            </div>
+            <strong key="loginFailed">Login unsuccessful</strong>
+          </div>
+        );
+      } else {
+        templates.push(<Spinner label="Logging In" />);
+      }
     }
     if (this.state.apiCallFailed) {
       templates.push(
