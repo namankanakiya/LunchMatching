@@ -19,10 +19,4 @@ const ResponseSchema = mongoose.Schema({
 
 const ResponseModel = mongoose.model("responses", ResponseSchema);
 
-/*ResponseModel.find({ "days.wednesday": true }, function(err, foundResponse) {
-  foundResponse.forEach(response =>
-    console.log("Response: " + JSON.stringify(response))
-  );
-});*/
-
 module.exports = ResponseModel;

@@ -25,7 +25,8 @@ class App extends Component {
       tuesdayChecked: false,
       wednesdayChecked: false,
       thursdayChecked: false,
-      fridayChecked: false
+      fridayChecked: false,
+      loading: true
     };
   }
 
@@ -100,11 +101,14 @@ class App extends Component {
             tuesdayChecked: tuesday,
             wednesdayChecked: wednesday,
             thursdayChecked: thursday,
-            fridayChecked: friday
+            fridayChecked: friday,
+            loading: false
           });
-          console.log(res);
         })
-        .catch(err => this.setState({ loginFailed: true, user: null }));
+        .catch(err => {
+          this.setState({ loginFailed: true, user: null });
+          console.log(err);
+        });
     });
   };
 
@@ -149,56 +153,63 @@ class App extends Component {
           <div key="loggedIn">
             <h3 className="h3">Hello {this.state.user.name}</h3>
           </div>
-          <div key="Checkboxes">
-            <Stack horizontal horizontalAlign="center" gap={5} padding={10}>
-              <Checkbox
-                label="Monday"
-                checked={mondayChecked}
-                onChange={this._mondayUpdate}
-                styles={checkboxStyle}
-              />
-              <Checkbox
-                label="Tuesday"
-                checked={tuesdayChecked}
-                onChange={this._tuesdayUpdate}
-                styles={checkboxStyle}
-              />
-              <Checkbox
-                label="Wednesday"
-                checked={wednesdayChecked}
-                onChange={this._wednesdayUpdate}
-                styles={checkboxStyle}
-              />
-              <Checkbox
-                label="Thursday"
-                checked={thursdayChecked}
-                onChange={this._thursdayUpdate}
-                styles={checkboxStyle}
-              />
-              <Checkbox
-                label="Friday"
-                checked={fridayChecked}
-                onChange={this._fridayUpdate}
-                styles={checkboxStyle}
-              />
-            </Stack>
+        </div>);
+      if (this.state.loading) {
+        templates.push(<Spinner key="data spinner" label="Loading Data" />);
+      } else {
+        templates.push(
+          <div key="content">
+            <div key="Checkboxes">
+              <Stack horizontal horizontalAlign="center" gap={5} padding={10}>
+                <Checkbox
+                  label="Monday"
+                  checked={mondayChecked}
+                  onChange={this._mondayUpdate}
+                  styles={checkboxStyle}
+                />
+                <Checkbox
+                  label="Tuesday"
+                  checked={tuesdayChecked}
+                  onChange={this._tuesdayUpdate}
+                  styles={checkboxStyle}
+                />
+                <Checkbox
+                  label="Wednesday"
+                  checked={wednesdayChecked}
+                  onChange={this._wednesdayUpdate}
+                  styles={checkboxStyle}
+                />
+                <Checkbox
+                  label="Thursday"
+                  checked={thursdayChecked}
+                  onChange={this._thursdayUpdate}
+                  styles={checkboxStyle}
+                />
+                <Checkbox
+                  label="Friday"
+                  checked={fridayChecked}
+                  onChange={this._fridayUpdate}
+                  styles={checkboxStyle}
+                />
+              </Stack>
+            </div>
+            <div key="submitButton">
+              <Stack horizontal padding={10} horizontalAlign="center" gap={5}>
+                <PrimaryButton
+                  text="Submit"
+                  onClick={this.saveSettings}
+                  style={buttonStyle}
+                />
+                <DefaultButton
+                  text="Logout"
+                  onClick={this.logout}
+                  style={buttonStyle}
+                />
+              </Stack>
+            </div>
           </div>
-          <div key="submitButton">
-            <Stack horizontal padding={10} horizontalAlign="center" gap={5}>
-              <PrimaryButton
-                text="Submit"
-                onClick={this.saveSettings}
-                style={buttonStyle}
-              />
-              <DefaultButton
-                text="Logout"
-                onClick={this.logout}
-                style={buttonStyle}
-              />
-            </Stack>
-          </div>
-        </div>
-      );
+        );
+      }
     } else {
       if (this.state.loginFailed) {
         templates.push(
@@ -210,7 +221,7 @@ class App extends Component {
           </div>
         );
       } else {
-        templates.push(<Spinner label="Logging In" />);
+        templates.push(<Spinner key="loginSpinner" label="Logging In" />);
       }
     }
     if (this.state.apiCallFailed) {
