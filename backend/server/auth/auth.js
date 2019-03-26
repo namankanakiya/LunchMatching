@@ -6,23 +6,29 @@ const isAuthenticated = (req, res, next) => {
   const options = {
       headers: headers
   };
-  fetch(`${graphUrl}/me`, options)
-      .then(checkStatus)
-      .then(response => {
-      return response.json();
-      })
-      .then(
-      data => {
-          res.locals.user = data;
-          next();
-      },
-      error => {
-          next(error);
-      }
-      )
-      .catch(err => {
-      next(err);
-      });
+  if (!req.session.user) {
+    fetch(`${graphUrl}/me`, options)
+        .then(checkStatus)
+        .then(response => {
+        return response.json();
+        })
+        .then(
+        data => {
+            res.locals.user = data;
+            next();
+        },
+        error => {
+            next(error);
+        }
+        )
+        .catch(err => {
+        next(err);
+        });
+  } else {
+    console.log("cached user");
+    res.locals.user = req.session.user;
+    next();
+  }
 }
   
 const checkStatus = (res) => {

@@ -3,13 +3,17 @@ const ResponseModel = require("../models/Response");
 
 /**
  * URL: localhost:5001/api/responses/
- * Response: Array of all responses documents
+ * Response: User Preferences
  */
 router.get("/", (req, res, next) => {
-  ResponseModel.find({}, (err, responses) => {
-    if (err) next(err);
-    else res.json(responses);
-  });
+  if (req.session.user && req.session.user.userPrincipalName) {
+    ResponseModel.find({email: req.session.user.userPrincipalName}, (err, responses) => {
+      if (err) next(err);
+      else res.json(responses);
+    });
+  } else {
+    res.status(403).send("Forbidden. Please login first");
+  }
 });
 
 /**
@@ -18,7 +22,7 @@ router.get("/", (req, res, next) => {
  */
 router.post("/create", (req, res, next) => {
   const response = req.body;
-  const Response = new ResponseModel({
+  const Response = {
     name: response.name,
     email: response.email,
     days: {
@@ -28,11 +32,24 @@ router.post("/create", (req, res, next) => {
       thursday: response.days.thursday,
       friday: response.days.friday
     }
-  });
-  Response.save(err => {
-    if (err) next(err);
-    else res.json({ Response, msg: "response successfully saved!" });
-  });
+  };
+  ResponseModel.findOneAndUpdate(
+    {
+        email: response.email
+    },
+    Response,
+    {upsert: true, new: true},
+    (err, doc) => {
+      if (err) {
+        console.log(err);
+        next(err);
+      } else {
+        console.log(doc);
+        req.session.selections = undefined;
+        res.json(doc);
+      }
+    }
+  )
 });
 
 module.exports = router;

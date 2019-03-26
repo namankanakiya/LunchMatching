@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
 import AuthService from "./services/auth.service";
-import GraphService from "./services/graph.service";
 import axios from "axios";
 import {
   Checkbox,
@@ -18,10 +17,8 @@ class App extends Component {
     super();
     this.axiosInstance = axios;
     this.authService = new AuthService();
-    this.graphService = new GraphService();
     this.state = {
       user: null,
-      userInfo: null,
       apiCallFailed: false,
       loginFailed: false,
       mondayChecked: false,
@@ -42,31 +39,10 @@ class App extends Component {
     }
   }
 
-  callAPI = () => {
-    this.setState({ apiCallFailed: false });
-    this.authService.getToken().then(
-      token => {
-        this.graphService.getUserInfo(token).then(
-          data => {
-            this.setState({ userInfo: data });
-          },
-          error => {
-            console.error(error);
-            this.setState({ apiCallFailed: true });
-          }
-        );
-      },
-      error => {
-        console.error(error);
-        this.setState({ apiCallFailed: true });
-      }
-    );
-  };
-
   saveSettings = () => {
     const response = {
-      name: this.state.userInfo.displayName,
-      email: this.state.userInfo.userPrincipalName,
+      name: this.state.user.name,
+      email: this.state.user.displayableId,
       days: {
         monday: this.state.mondayChecked,
         tuesday: this.state.tuesdayChecked,
@@ -117,7 +93,17 @@ class App extends Component {
       };
       this.axiosInstance
         .get("/api/login")
-        .then(res => this.setState({ userInfo: res.data }))
+        .then(res => {
+          const {monday, tuesday, wednesday, thursday, friday} = res.data[0].days;
+          this.setState({
+            mondayChecked: monday,
+            tuesdayChecked: tuesday,
+            wednesdayChecked: wednesday,
+            thursdayChecked: thursday,
+            fridayChecked: friday
+          });
+          console.log(res);
+        })
         .catch(err => this.setState({ loginFailed: true, user: null }));
     });
   };

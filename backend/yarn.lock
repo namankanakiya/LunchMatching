@@ -124,6 +124,11 @@ caseless@~0.12.0:
   resolved "https://onedrive.pkgs.visualstudio.com/_packaging/odsp-npm/npm/registry/caseless/-/caseless-0.12.0.tgz#1b681c21ff84033c826543090689420d187151dc"
   integrity sha1-G2gcIf+EAzyCZUMJBolCDRhxUdw=
 
+clone@^1.0.2:
+  version "1.0.4"
+  resolved "https://onedrive.pkgs.visualstudio.com/_packaging/odsp-npm/npm/registry/clone/-/clone-1.0.4.tgz#da309cc263df15994c688ca902179ca3c7cd7c7e"
+  integrity sha1-2jCcwmPfFZlMaIypAheco8fNfH4=
+
 combined-stream@^1.0.6, combined-stream@~1.0.6:
   version "1.0.7"
   resolved "https://onedrive.pkgs.visualstudio.com/_packaging/odsp-npm/npm/registry/combined-stream/-/combined-stream-1.0.7.tgz#2d1d24317afb8abe95d6d2c0b07b57813539d828"
@@ -197,6 +202,13 @@ debug@3.1.0:
   dependencies:
     ms "2.0.0"
 
+defaults@^1.0.3:
+  version "1.0.3"
+  resolved "https://onedrive.pkgs.visualstudio.com/_packaging/odsp-npm/npm/registry/defaults/-/defaults-1.0.3.tgz#c656051e9817d9ff08ed881477f3fe4019f3ef7d"
+  integrity sha1-xlYFHpgX2f8I7YgUd/P+QBnz730=
+  dependencies:
+    clone "^1.0.2"
+
 delayed-stream@~1.0.0:
   version "1.0.0"
   resolved "https://onedrive.pkgs.visualstudio.com/_packaging/odsp-npm/npm/registry/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
@@ -244,6 +256,13 @@ etag@~1.8.1:
   version "1.8.1"
   resolved "https://onedrive.pkgs.visualstudio.com/_packaging/odsp-npm/npm/registry/etag/-/etag-1.8.1.tgz#41ae2eeb65efa62268aebfea83ac7d79299b0887"
   integrity sha1-Qa4u62XvpiJorr/qg6x9eSmbCIc=
+
+express-rate-limit@^3.4.0:
+  version "3.4.0"
+  resolved "https://onedrive.pkgs.visualstudio.com/_packaging/odsp-npm/npm/registry/express-rate-limit/-/express-rate-limit-3.4.0.tgz#c053ee294feac6d3529863de549438749fd83ef1"
+  integrity sha512-SktWQGHhTQfIOZykiVIaoqmHCptqq177fEbumVytWsMpEqe+g78IFrfzivJTimoCdMZ5+vYJ5/a/w1darXMv+A==
+  dependencies:
+    defaults "^1.0.3"
 
 express-session@^1.15.6:
   version "1.15.6"
