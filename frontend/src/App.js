@@ -95,7 +95,13 @@ class App extends Component {
       this.axiosInstance
         .get("/api/login")
         .then(res => {
-          const {monday, tuesday, wednesday, thursday, friday} = res.data[0].days;
+          const {
+            monday,
+            tuesday,
+            wednesday,
+            thursday,
+            friday
+          } = res.data[0].days;
           this.setState({
             mondayChecked: monday,
             tuesdayChecked: tuesday,
@@ -154,7 +160,8 @@ class App extends Component {
             <h3 className="h3">Hello {this.state.user.name}</h3>
             <h4 className="h4">Which day(s) would you like to have a lunch buddy?</h4>
           </div>
-        </div>);
+        </div>
+      );
       if (this.state.loading) {
         templates.push(<Spinner key="data spinner" label="Loading Data" />);
       } else {
