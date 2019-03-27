@@ -53,9 +53,11 @@ app.get("/api/login", isAuthenticated, (req, res) => {
 });
 
 app.get("/*", (req, res) => {
+  console.log("serving index");
   res.sendFile("index.html", {
     root: __dirname
   });
 });
 
-app.listen(PORT, () => console.log(`Something happening on ${PORT}`));
+const port = PORT || 5001;
+app.listen(port, () => console.log(`Something happening on ${port}`));

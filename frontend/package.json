@@ -28,5 +28,5 @@
   "devDependencies": {
     "prettier": "1.16.4"
   },
-  "proxy": "http://localhost:5001/"
+  "proxy": "https://lunchmeetingback.azurewebsites.net/"
 }

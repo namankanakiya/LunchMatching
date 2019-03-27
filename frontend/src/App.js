@@ -16,6 +16,7 @@ class App extends Component {
   constructor() {
     super();
     this.axiosInstance = axios;
+    this.axiosInstance.defaults.withCredentials = true;
     this.authService = new AuthService();
     this.state = {
       user: null,
@@ -52,7 +53,7 @@ class App extends Component {
         friday: this.state.fridayChecked
       }
     };
-    axios
+    this.axiosInstance
       .post("/api/responses/create", response)
       .then(res => alert(`Succesfully saved ${JSON.stringify(res)}`))
       .catch(err => alert(`Failed to save settings\n${JSON.stringify(err)}`));
