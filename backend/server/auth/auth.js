@@ -4,34 +4,34 @@ const graphUrl = "https://graph.microsoft.com/v1.0/";
 const isAuthenticated = (req, res, next) => {
   const headers = { Authorization: req.headers.authorization };
   const options = {
-      headers: headers
+    headers: headers
   };
   if (!req.session.user) {
     fetch(`${graphUrl}/me`, options)
-        .then(checkStatus)
-        .then(response => {
+      .then(checkStatus)
+      .then(response => {
         return response.json();
-        })
-        .then(
+      })
+      .then(
         data => {
-            res.locals.user = data;
-            next();
+          res.locals.user = data;
+          next();
         },
         error => {
-            next(error);
+          next(error);
         }
-        )
-        .catch(err => {
+      )
+      .catch(err => {
         next(err);
-        });
+      });
   } else {
     console.log("cached user");
     res.locals.user = req.session.user;
     next();
   }
-}
-  
-const checkStatus = (res) => {
+};
+
+const checkStatus = res => {
   if (res.ok) {
     return res;
   } else {
@@ -39,6 +39,6 @@ const checkStatus = (res) => {
     err.status = res.status;
     throw err;
   }
-}
+};
 
-module.exports = {isAuthenticated, checkStatus}
+module.exports = { isAuthenticated, checkStatus };

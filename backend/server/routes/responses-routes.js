@@ -7,10 +7,13 @@ const ResponseModel = require("../models/Response");
  */
 router.get("/", (req, res, next) => {
   if (req.session.user && req.session.user.userPrincipalName) {
-    ResponseModel.find({email: req.session.user.userPrincipalName}, (err, responses) => {
-      if (err) next(err);
-      else res.json(responses);
-    });
+    ResponseModel.find(
+      { email: req.session.user.userPrincipalName },
+      (err, responses) => {
+        if (err) next(err);
+        else res.json(responses);
+      }
+    );
   } else {
     res.status(403).send("Forbidden. Please login first");
   }
@@ -35,10 +38,10 @@ router.post("/create", (req, res, next) => {
   };
   ResponseModel.findOneAndUpdate(
     {
-        email: response.email
+      email: response.email
     },
     Response,
-    {upsert: true, new: true},
+    { upsert: true, new: true },
     (err, doc) => {
       if (err) {
         console.log(err);
@@ -49,7 +52,7 @@ router.post("/create", (req, res, next) => {
         res.json(doc);
       }
     }
-  )
+  );
 });
 
 module.exports = router;
