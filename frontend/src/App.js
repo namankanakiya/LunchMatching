@@ -150,8 +150,9 @@ class App extends Component {
     if (this.state.user) {
       templates.push(
         <div key="all things">
-          <div key="loggedIn">
+          <div key="User">
             <h3 className="h3">Hello {this.state.user.name}</h3>
+            <h4 className="h4">Which day(s) would you like to have a lunch buddy?</h4>
           </div>
         </div>);
       if (this.state.loading) {
