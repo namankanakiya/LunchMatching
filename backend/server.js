@@ -2,6 +2,7 @@ require("dotenv").config();
 require("./server/db-conn");
 const express = require("express");
 const bodyParser = require("body-parser");
+const path = require('path');
 const { isAuthenticated } = require("./server/auth/auth");
 const session = require("express-session");
 const AzureTablesStoreFactory = require("connect-azuretables-updated")(session);
@@ -29,6 +30,8 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+app.use(express.static(path.join(__dirname, 'client/build')));
+
 app.use("/api/responses/", require("./server/routes/responses-routes"));
 
 app.get("/api/login", isAuthenticated, (req, res) => {
@@ -52,11 +55,9 @@ app.get("/api/login", isAuthenticated, (req, res) => {
   }
 });
 
-app.get("/*", (req, res) => {
+app.get("*", (req, res) => {
   console.log("serving index");
-  res.sendFile("index.html", {
-    root: __dirname
-  });
+  res.sendFile(path.join(__dirname+'/client/build/index.html'));
 });
 
 const port = PORT || 5001;
