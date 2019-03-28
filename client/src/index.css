@@ -6,6 +6,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html {
   background: url("https://momentumdash.com/backgrounds/04.jpg") no-repeat
     center center fixed;
   -webkit-background-size: cover;
