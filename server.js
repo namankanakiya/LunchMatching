@@ -34,15 +34,19 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.use("/api/responses/", require("./server/routes/responses-routes"));
 
-app.get("/api/login", isAuthenticated, (req, res) => {
+app.get("/api/login", isAuthenticated, (req, res, next) => {
   if (!req.session.user) {
     req.session.user = res.locals.user;
   }
   if (!req.session.selections) {
-    ResponseModel.find(
+    ResponseModel.findOneAndUpdate(
       { email: req.session.user.userPrincipalName },
+      { email: req.session.user.userPrincipalName},
+      {upsert: true, setDefaultsOnInsert: true},
       (err, responses) => {
-        if (err) next(err);
+        if (err) {
+          next(err);
+        }
         else {
           req.session.selections = responses;
           res.json(responses);

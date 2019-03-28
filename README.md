@@ -23,9 +23,8 @@ The client project was bootstrapped with [Create React App](https://github.com/f
 # Running
 
 ## Locally with client hot reload
-1. Add `"proxy": "http://localhost:(serverport)/"` to client package.json
-2. `yarn start` in root directory to start server
-3. `yarn start` in client directory - should open up a browser to localhost:3000 by default
+1. `yarn start` in root directory to start server
+2. `yarn start` in client directory - should open up a browser to localhost:3000 by default
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**If express is crashing, ensure a `yarn build` in the client directory has been done at some point
 

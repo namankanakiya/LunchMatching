@@ -4,11 +4,11 @@ const ResponseSchema = mongoose.Schema({
   name: String,
   email: String,
   days: {
-    monday: Boolean,
-    tuesday: Boolean,
-    wednesday: Boolean,
-    thursday: Boolean,
-    friday: Boolean
+    monday: {type: Boolean, default: false},
+    tuesday: {type: Boolean, default: false},
+    wednesday: {type: Boolean, default: false},
+    thursday: {type: Boolean, default: false},
+    friday: {type: Boolean, default: false}
   },
   matches: [
     {

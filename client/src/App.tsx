@@ -133,7 +133,7 @@ class App extends Component<any, AppState> {
             wednesday,
             thursday,
             friday
-          } = res.data[0].days;
+          } = res.data.days;
           this.setState({
             mondayChecked: monday,
             tuesdayChecked: tuesday,
