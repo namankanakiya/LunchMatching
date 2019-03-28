@@ -42,7 +42,7 @@ app.get("/api/login", isAuthenticated, (req, res, next) => {
     ResponseModel.findOneAndUpdate(
       { email: req.session.user.userPrincipalName },
       { email: req.session.user.userPrincipalName},
-      {upsert: true, setDefaultsOnInsert: true},
+      {upsert: true, setDefaultsOnInsert: true, new: true},
       (err, responses) => {
         if (err) {
           next(err);

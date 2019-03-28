@@ -19,6 +19,8 @@ interface AppState {
   user?: User;
   /** True if the login has failed */
   loginFailed?: boolean;
+  /** True if server had an error */
+  serverError?: boolean
   /** If the user wants a match on Monday */
   mondayChecked?: boolean;
   /** If the user wants a match on Tueday */
@@ -48,6 +50,7 @@ class App extends Component<any, AppState> {
     this.state = {
       user: undefined,
       loginFailed: false,
+      serverError: false,
       mondayChecked: false,
       tuesdayChecked: false,
       wednesdayChecked: false,
@@ -65,8 +68,6 @@ class App extends Component<any, AppState> {
     if (user && user.idToken && !this.isTokenExpired(user.idToken.exp)) {
       this.setState({ user: user });
       this.axiosLogin();
-    } else {
-      this.login();
     }
   }
 
@@ -120,6 +121,9 @@ class App extends Component<any, AppState> {
   };
 
   axiosLogin = () => {
+    this.setState({
+      serverError: false
+    });
     this.authService.getToken().then((accessToken: string | undefined) => {
       this.axiosInstance.defaults.headers.common = {
         Authorization: `Bearer ${accessToken}`
@@ -144,7 +148,7 @@ class App extends Component<any, AppState> {
           });
         })
         .catch(err => {
-          this.setState({ loginFailed: true, user: undefined });
+          this.setState({ serverError: true, loading: false });
           console.log(err);
         });
     });
@@ -196,6 +200,10 @@ class App extends Component<any, AppState> {
       );
       if (this.state.loading) {
         templates.push(<Spinner key="data spinner" label="Loading Data" />);
+      } else if (this.state.serverError) {
+        templates.push(
+          <h5 key="error" className="error">Error communicating with server, please try at a later time.</h5>
+        );
       } else {
         templates.push(
           <div key="content" className="outsideDiv">
@@ -261,7 +269,11 @@ class App extends Component<any, AppState> {
           </div>
         );
       } else {
-        templates.push(<Spinner key="loginSpinner" label="Logging In" />);
+        templates.push(
+          <div key="loginButton">
+            <PrimaryButton text="Login with Microsoft" onClick={this.login} />
+          </div>
+        );
       }
     }
     return <div className="App">{templates}</div>;
