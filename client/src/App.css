@@ -1,7 +1,10 @@
 .App {
+  display: block;
+  position: absolute;
   text-align: center;
-  min-height: 40vh;
-  transform: translate(0, 80%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .App-logo {
@@ -42,6 +45,14 @@
   padding-right: 32px;
   padding-left: 32px;
   height: 64px;
+}
+
+.outsideDiv {
+  text-align: center;
+}
+
+.insideDiv {
+  display: inline-block;
 }
 
 @keyframes App-logo-spin {

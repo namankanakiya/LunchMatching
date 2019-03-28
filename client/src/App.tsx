@@ -1,26 +1,52 @@
 import React, { Component } from "react";
 import "./App.css";
 import AuthService from "./services/auth.service";
-import axios from "axios";
+import axios, { AxiosStatic } from "axios";
 import {
   Checkbox,
   Stack,
   PrimaryButton,
   DefaultButton,
-  Spinner
+  Spinner,
+  ICheckboxStyles
 } from "office-ui-fabric-react";
 import { initializeIcons } from "office-ui-fabric-react/lib/Icons";
+import { User } from "msal";
 initializeIcons();
 
-class App extends Component {
-  constructor() {
-    super();
-    this.axiosInstance = axios;
-    this.axiosInstance.defaults.withCredentials = true;
-    this.authService = new AuthService();
+interface AppState {
+  /** The user from authenticated login */
+  user?: User;
+  /** True if the login has failed */
+  loginFailed?: boolean;
+  /** If the user wants a match on Monday */
+  mondayChecked?: boolean;
+  /** If the user wants a match on Tueday */
+  tuesdayChecked?: boolean;
+  /** If the user wants a match on Wednesday */
+  wednesdayChecked?: boolean;
+  /** If the user wants a match on Thursday */
+  thursdayChecked?: boolean;
+  /** If the user wants a match on Friday */
+  fridayChecked?: boolean;
+  /** If the data is being loaded from the database */
+  loading?: boolean;
+}
+
+interface newUser extends User {
+  idToken : {
+    exp: number
+  }
+}
+
+class App extends Component<any, AppState> {
+  private axiosInstance: AxiosStatic = axios;
+  private authService: AuthService;
+  
+  constructor(props: any) {
+    super(props);
     this.state = {
-      user: null,
-      apiCallFailed: false,
+      user: undefined,
       loginFailed: false,
       mondayChecked: false,
       tuesdayChecked: false,
@@ -29,10 +55,13 @@ class App extends Component {
       fridayChecked: false,
       loading: true
     };
+    this.axiosInstance = axios;
+    this.axiosInstance.defaults.withCredentials = true;
+    this.authService = new AuthService();
   }
 
   componentDidMount() {
-    let user = this.authService.app.getUser();
+    let user: newUser = this.authService.app.getUser() as newUser;
     if (user && user.idToken && !this.isTokenExpired(user.idToken.exp)) {
       this.setState({ user: user });
       this.axiosLogin();
@@ -42,21 +71,23 @@ class App extends Component {
   }
 
   saveSettings = () => {
-    const response = {
-      name: this.state.user.name,
-      email: this.state.user.displayableId,
-      days: {
-        monday: this.state.mondayChecked,
-        tuesday: this.state.tuesdayChecked,
-        wednesday: this.state.wednesdayChecked,
-        thursday: this.state.thursdayChecked,
-        friday: this.state.fridayChecked
-      }
-    };
-    this.axiosInstance
-      .post("/api/responses/create", response)
-      .then(res => alert(`Succesfully saved ${JSON.stringify(res)}`))
-      .catch(err => alert(`Failed to save settings\n${JSON.stringify(err)}`));
+    if (this.state.user) {
+      const response = {
+        name: this.state.user.name,
+        email: this.state.user.displayableId,
+        days: {
+          monday: this.state.mondayChecked,
+          tuesday: this.state.tuesdayChecked,
+          wednesday: this.state.wednesdayChecked,
+          thursday: this.state.thursdayChecked,
+          friday: this.state.fridayChecked
+        }
+      };
+      this.axiosInstance
+        .post("/api/responses/create", response)
+        .then(res => alert(`Succesfully saved ${JSON.stringify(res)}`))
+        .catch(err => alert(`Failed to save settings\n${JSON.stringify(err)}`));
+    }
   };
 
   logout = () => {
@@ -68,7 +99,7 @@ class App extends Component {
       loginFailed: false
     });
     this.authService.login().then(
-      user => {
+      (user: User | undefined) => {
         if (user) {
           this.setState({
             user: user
@@ -89,7 +120,7 @@ class App extends Component {
   };
 
   axiosLogin = () => {
-    this.authService.getToken().then(accessToken => {
+    this.authService.getToken().then((accessToken: string | undefined) => {
       this.axiosInstance.defaults.headers.common = {
         Authorization: `Bearer ${accessToken}`
       };
@@ -113,13 +144,13 @@ class App extends Component {
           });
         })
         .catch(err => {
-          this.setState({ loginFailed: true, user: null });
+          this.setState({ loginFailed: true, user: undefined });
           console.log(err);
         });
     });
   };
 
-  isTokenExpired = tokenTime => {
+  isTokenExpired = (tokenTime: number) => {
     const nowDate = new Date();
     return tokenTime ? tokenTime < nowDate.getTime() / 1000 : true;
   };
@@ -131,7 +162,7 @@ class App extends Component {
       paddingLeft: "32px",
       height: "64px"
     };
-    const checkboxStyle = {
+    const checkboxStyle: ICheckboxStyles = {
       root: {
         marginRight: 10
       },
@@ -142,8 +173,8 @@ class App extends Component {
         fontWeight: "bolder"
       },
       checkbox: {
-        "border-color": "#fff",
-        "border-width": "2px"
+        "borderColor": "#fff",
+        "borderWidth": "2px"
       }
     };
     let templates = [];
@@ -167,9 +198,9 @@ class App extends Component {
         templates.push(<Spinner key="data spinner" label="Loading Data" />);
       } else {
         templates.push(
-          <div key="content">
-            <div key="Checkboxes">
-              <Stack horizontal horizontalAlign="center" gap={5} padding={10}>
+          <div key="content" className="outsideDiv">
+            <div key="Checkboxes" className="insideDiv">
+              <Stack horizontalAlign="start" verticalAlign="space-evenly" gap={20} padding={10}>
                 <Checkbox
                   label="Monday"
                   checked={mondayChecked}
@@ -232,11 +263,6 @@ class App extends Component {
       } else {
         templates.push(<Spinner key="loginSpinner" label="Logging In" />);
       }
-    }
-    if (this.state.apiCallFailed) {
-      templates.push(
-        <strong key="apiCallFailed">Graph API call unsuccessful</strong>
-      );
     }
     return <div className="App">{templates}</div>;
   }
