@@ -2,8 +2,9 @@ require("dotenv").config();
 require("./server/db-conn");
 const express = require("express");
 const bodyParser = require("body-parser");
-const path = require('path');
+const path = require("path");
 const { isAuthenticated } = require("./server/auth/auth");
+const { matchFinder } = require("./server/match/match");
 const session = require("express-session");
 const AzureTablesStoreFactory = require("connect-azuretables-updated")(session);
 const rateLimit = require("express-rate-limit");
@@ -30,7 +31,7 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-app.use(express.static(path.join(__dirname, 'client/build')));
+app.use(express.static(path.join(__dirname, "client/build")));
 
 app.use("/api/responses/", require("./server/routes/responses-routes"));
 
@@ -41,13 +42,12 @@ app.get("/api/login", isAuthenticated, (req, res, next) => {
   if (!req.session.selections) {
     ResponseModel.findOneAndUpdate(
       { email: req.session.user.userPrincipalName },
-      { email: req.session.user.userPrincipalName},
-      {upsert: true, setDefaultsOnInsert: true, new: true},
+      { email: req.session.user.userPrincipalName },
+      { upsert: true, setDefaultsOnInsert: true, new: true },
       (err, responses) => {
         if (err) {
           next(err);
-        }
-        else {
+        } else {
           req.session.selections = responses;
           res.json(responses);
         }
@@ -61,8 +61,10 @@ app.get("/api/login", isAuthenticated, (req, res, next) => {
 
 app.get("*", (req, res) => {
   console.log("serving index");
-  res.sendFile(path.join(__dirname+'/client/build/index.html'));
+  res.sendFile(path.join(__dirname + "/client/build/index.html"));
 });
 
 const port = PORT || 5001;
 app.listen(port, () => console.log(`Something happening on ${port}`));
+
+matchFinder("thursday");

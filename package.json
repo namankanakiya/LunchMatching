@@ -9,11 +9,14 @@
   "scripts": {
     "start": "node server"
   },
-  "engines":{"node":"8.9.4"},
+  "engines": {
+    "node": "8.9.4"
+  },
   "dependencies": {
     "body-parser": "^1.18.3",
     "connect-azuretables-updated": "^1.1.1",
     "dotenv": "^6.2.0",
+    "edmonds-blossom": "^1.0.0",
     "express": "^4.16.4",
     "express-rate-limit": "^3.4.0",
     "express-session": "^1.15.6",
