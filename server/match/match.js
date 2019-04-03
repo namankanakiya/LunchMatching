@@ -7,7 +7,7 @@ const matchFinder = day => {
   options[dayMatch] = true;
   ResponseModel.find(options, (err, res) => {
     if (err) {
-      console.log(err);
+      throw new Error("matching broken");
     } else {
       let peopleToMatch = {};
       let graphEdges = [];
@@ -27,14 +27,32 @@ const matchFinder = day => {
       });
       const results = blossom(graphEdges, 1);
       let matches = {};
+      let notMatched = [];
       results.forEach((result, index) => {
-        const user1 = peopleToMatch[result];
-        const user2 = peopleToMatch[index];
-        if (!(user1 in matches || user2 in matches)) {
-          matches[user1] = user2;
+        if (result != -1) {
+          const user1 = peopleToMatch[result];
+          const user2 = peopleToMatch[index];
+          if (!(user1 in matches || user2 in matches)) {
+            matches[user1] = user2;
+          }
+        } else {
+          notMatched.push(peopleToMatch[index]);
         }
       });
-      console.log(matches);
+      while (notMatched.length >= 2) {
+        const user1 = notMatched.shift();
+        const user2 = notMatched.pop();
+        matches[user1] = user2;
+      }
+      let singleLeft = notMatched.length === 1 ? true : false;
+      Object.entries(matches).forEach((match) => {
+        let matchString = match[0] + match[1];
+        if (singleLeft) {
+          singleLeft = false;
+          matchString += notMatched.shift();
+        }
+        console.log(matchString);
+      });
     }
   });
 };
